@@ -80,22 +80,8 @@ class ARCFilesSource(
         real backend pagination is not possible, the fallback is handled inside
         the ARCfs filesystem class rather than here.
         """
-        fs_path = path
-
         try:
-            if recursive or query or sort_by:
-                return super()._list(
-                    context=context,
-                    path=path,
-                    recursive=recursive,
-                    write_intent=write_intent,
-                    limit=limit,
-                    offset=offset,
-                    query=query,
-                    sort_by=sort_by,
-                )
-
-            if limit is None and offset is None:
+            if recursive or query or sort_by or (limit is None and offset is None):
                 return super()._list(
                     context=context,
                     path=path,
@@ -138,7 +124,7 @@ class ARCFilesSource(
             )
         except Exception as e:
             raise MessageException(
-                f"Problem listing file source path {fs_path}. Reason: {e}"
+                f"Problem listing file source path {path}. Reason: {e}"
             ) from e
 
 
