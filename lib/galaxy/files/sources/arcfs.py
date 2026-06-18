@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from fsspec.asyn import sync
-
 from galaxy.exceptions import AuthenticationRequired, MessageException
 from galaxy.files.models import AnyRemoteEntry, FilesSourceRuntimeContext
 from galaxy.files.sources._fsspec import (
@@ -98,9 +96,7 @@ class ARCFilesSource(
             fs_path = self._to_filesystem_path(path, context.config)
 
             try:
-                infos, total_count = sync(
-                    fs.loop,
-                    fs._list_page,
+                infos, total_count = fs.list_page(
                     fs_path,
                     True,
                     offset=offset or 0,
@@ -112,10 +108,7 @@ class ARCFilesSource(
                 ]
                 return entries, total_count
             finally:
-                try:
-                    sync(fs.loop, fs._close)
-                except Exception:
-                    pass
+                fs.close()
 
         except PermissionError as e:
             # Unauthenticated access without a token is possible, but an invalid token will raise PermissionError.
