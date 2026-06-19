@@ -1,9 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import (
+    Optional,
+    Union,
+)
 
-from galaxy.exceptions import AuthenticationRequired, MessageException
-from galaxy.files.models import AnyRemoteEntry, FilesSourceRuntimeContext
+from galaxy.exceptions import (
+    AuthenticationRequired,
+    MessageException,
+)
+from galaxy.files.models import (
+    AnyRemoteEntry,
+    FilesSourceRuntimeContext,
+)
 from galaxy.files.sources._fsspec import (
     CacheOptionsDictType,
     FsspecBaseFileSourceConfiguration,
@@ -32,9 +41,7 @@ class ARCResolvedConfiguration(FsspecBaseFileSourceConfiguration):
     token: Optional[str] = None
 
 
-class ARCFilesSource(
-    FsspecFilesSource[ARCTemplateConfiguration, ARCResolvedConfiguration]
-):
+class ARCFilesSource(FsspecFilesSource[ARCTemplateConfiguration, ARCResolvedConfiguration]):
     plugin_type = FS_PLUGIN_TYPE
     required_module = GitLabARCFileSystem
     required_package = REQUIRED_PACKAGE
@@ -102,10 +109,7 @@ class ARCFilesSource(
                     offset=offset or 0,
                     limit=limit or 50,
                 )
-                entries = [
-                    self._info_to_entry(info, context.config)
-                    for info in infos
-                ]
+                entries = [self._info_to_entry(info, context.config) for info in infos]
                 return entries, total_count
             finally:
                 fs.close()
@@ -116,9 +120,7 @@ class ARCFilesSource(
                 f"Permission Denied. Reason: {e}. Please check your credentials in your preferences for {self.label}."
             )
         except Exception as e:
-            raise MessageException(
-                f"Problem listing file source path {path}. Reason: {e}"
-            ) from e
+            raise MessageException(f"Problem listing file source path {path}. Reason: {e}") from e
 
 
 __all__ = ("ARCFilesSource",)
